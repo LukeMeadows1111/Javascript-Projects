@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inconsolata"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .main-div {
+        margin: 50px auto;
+        width: 602px;
+        height: 602px;
+        border: black solid 1px;
+        position: relative;
+      }
+
+      .d1,
+      .d2,
+      .d3,
+      .d4,
+      .d5,
+      .d6 {
+        height: 60px;
+        width: 60px;
+        border-radius: 25%;
+      }
+
+      .score {
+        width: 120px;
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        border: white solid 1px;
+        height: 60px;
+        border-radius: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 60px;
+      }
+
+      .choose {
+        background: black;
+        width: 602px;
+        height: 100px;
+        margin: auto;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: rgb(0, 0, 0, 0.5);
+        border-radius: 25px;
+      }
+
+      .block {
+        height: 20px;
+        width: 20px;
+        position: absolute;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="main-div"></div>
+    <div class="choose">
+      <div class="d1 col" style="background-color:#E1ACAC"></div>
+      <div class="d2 col" style="background-color:#84EB8F"></div>
+      <div class="d3 col" style="background-color:#78ECF1"></div>
+      <div class="d4 col" style="background-color:#9E8ADC"></div>
+      <div class="d5 col" style="background-color:#C80462"></div>
+      <!-- <div class="d6 col"style="background-color:#FFEF01"></div> -->
+      <div class="score">0</div>
+    </div>
+  </body>
+  <script>
+    let leftdiv = 0;
+    let topdiv = 0;
+    const colors = ['#E1ACAC', '#84EB8F', '#78ECF1', '#9E8ADC', '#C80462']; //, '#FFEF01'
+    const grey = 'rgb(173, 173, 173)';
+    const mainDiv = document.querySelector('.main-div');
+    const selectors = document.querySelectorAll('.col');
+    let divArray = [];
+    const score = document.querySelector('.score');
+    let displayScore = 0;
+
+    score.innerHTML = displayScore;
+
+    for (var i = 0; i < 900; i++) {
+      var rand = colors[Math.floor(Math.random() * colors.length)];
+      var div = document.createElement('div');
+      div.id = `block ${i}`;
+      div.classList = 'block';
+      div.style.left = `${leftdiv}px`;
+      div.style.top = `${topdiv}px`;
+      if (i > 0) {
+        div.style.backgroundColor = rand;
+      } else {
+        div.style.backgroundColor = grey;
+      }
+      leftdiv = leftdiv + 20;
+
+      if (leftdiv >= 600) {
+        leftdiv = 0;
+        topdiv = topdiv + 20;
+      }
+      mainDiv.appendChild(div);
+    }
+
+    function handleColor(e) {
+      displayScore++;
+      score.innerHTML = displayScore;
+      const divs = document.querySelectorAll('.block');
+
+      divs.forEach(div => {
+        const selector = this.style.backgroundColor;
+        if (div.style.backgroundColor !== grey) {
+          return;
+        }
+        const coords = {
+          left: parseInt(div.style.left),
+          top: parseInt(div.style.top)
+        };
+
+        const maybeGrey = {
+          left: { left: `${coords.left - 20}px`, top: `${coords.top}px` },
+          right: { left: `${coords.left + 20}px`, top: `${coords.top}px` },
+          top: { left: `${coords.left}px`, top: `${coords.top - 20}px` },
+          bottom: { left: `${coords.left}px`, top: `${coords.top + 20}px` }
+        };
+        console.log(maybeGrey);
+
+        divs.forEach(div => {
+          if (div.style.backgroundColor !== selector) {
+            return;
+          }
+          if (
+            div.style.top === maybeGrey.right.top &&
+            div.style.left === maybeGrey.right.left
+          ) {
+            div.style.backgroundColor = grey;
+          }
+          if (
+            div.style.top === maybeGrey.left.top &&
+            div.style.left === maybeGrey.left.left
+          ) {
+            div.style.backgroundColor = grey;
+          }
+          if (
+            div.style.top === maybeGrey.top.top &&
+            div.style.left === maybeGrey.top.left
+          ) {
+            div.style.backgroundColor = grey;
+          }
+          if (
+            div.style.top === maybeGrey.bottom.top &&
+            div.style.left === maybeGrey.bottom.left
+          ) {
+            div.style.backgroundColor = grey;
+          }
+        });
+      });
+    }
+
+    selectors.forEach(selector =>
+      selector.addEventListener('click', handleColor)
+    );
+  </script>
+</html>
